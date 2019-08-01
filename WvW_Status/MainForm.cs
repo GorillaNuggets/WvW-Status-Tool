@@ -26,7 +26,7 @@ namespace WvW_Status
         {
             InitializeComponent();
             StartProgram();
-            Render();
+            DisplayInformation();
         }
         public void StartProgram()
         {
@@ -36,7 +36,7 @@ namespace WvW_Status
             var worldsData = client.DownloadString("https://api.guildwars2.com/v2/worlds?ids=all");
             var worldResult = JsonConvert.DeserializeObject<List<WorldsList>>(worldsData);
 
-            var matchesData = client.DownloadString("https://api.guildwars2.com/v2/wvw/matches?ids=all");
+            var matchesData = client.DownloadString("https://api.guildwars2.com/v2/wvw/matches?ids=all");            
             var matchesResult = JsonConvert.DeserializeObject<List<MatchesList>>(matchesData);
             client.Dispose();
 
@@ -45,23 +45,8 @@ namespace WvW_Status
             skirmishNA = matchesResult[0].Skirmishes.Count;
             skirmishEU = matchesResult[4].Skirmishes.Count;
 
-            DateTime eomNA = new DateTime();
-            eomNA = DateTime.ParseExact(matchesResult[0].End_Time, "yyyy-MM-ddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
-            TimeSpan diffNA = eomNA - DateTime.Now;
-            EndOfMatchNA = diffNA.Days > 0
-                            ? $"{diffNA.Days}d {diffNA.Hours}h {diffNA.Minutes}m"
-                            : diffNA.Hours > 0
-                                ? $"{diffNA.Hours}h {diffNA.Minutes}m"
-                                : $"{diffNA.Minutes}m";
-
-            DateTime eomEU = new DateTime();
-            eomEU = DateTime.ParseExact(matchesResult[4].End_Time, "yyyy-MM-ddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
-            TimeSpan diffEU = eomEU - DateTime.Now;
-            EndOfMatchEU = diffEU.Days > 0
-                            ? $"{diffEU.Days}d {diffEU.Hours}h {diffEU.Minutes}m"
-                            : diffEU.Hours > 0
-                                ? $"{diffEU.Hours}h {diffEU.Minutes}m"
-                                : $"{diffEU.Minutes}m";
+            EndOfMatchNA = CalculateEndOfMatch(matchesResult[0].End_Time);
+            EndOfMatchEU = CalculateEndOfMatch(matchesResult[4].End_Time);
 
             // ------------------------------------------------------  Sort the information in to Lists  ------------------------------------------------------
 
@@ -79,8 +64,6 @@ namespace WvW_Status
 
             foreach (var matches in matchesResult)
             {
-
-
                 var matchInfo = new List<MatchInfo>
                 {
                     new MatchInfo()
@@ -92,6 +75,7 @@ namespace WvW_Status
                         LowVictoryPoints = CalculateVP(matches.Victory_Points.Green,(matches.Skirmishes.Count)).Item1,
                         HighVictoryPoints = CalculateVP(matches.Victory_Points.Green,(matches.Skirmishes.Count)).Item2,
                         VictoryPointsToolTip = CalculateVP(matches.Victory_Points.Green,(matches.Skirmishes.Count)).Item3,
+                        LongVP = Double.Parse($"{matches.Victory_Points.Green}.{matches.Skirmishes[(matches.Skirmishes.Count - 1)].Scores.Green}"),
                         Score = matches.Skirmishes[(matches.Skirmishes.Count - 1)].Scores.Green,
                         Locked = false
                     },
@@ -104,6 +88,7 @@ namespace WvW_Status
                         LowVictoryPoints = CalculateVP(matches.Victory_Points.Blue,(matches.Skirmishes.Count)).Item1,
                         HighVictoryPoints = CalculateVP(matches.Victory_Points.Blue,(matches.Skirmishes.Count)).Item2,
                         VictoryPointsToolTip = CalculateVP(matches.Victory_Points.Blue,(matches.Skirmishes.Count)).Item3,
+                        LongVP = Double.Parse($"{matches.Victory_Points.Blue}.{matches.Skirmishes[(matches.Skirmishes.Count - 1)].Scores.Blue}"),
                         Score = matches.Skirmishes[(matches.Skirmishes.Count - 1)].Scores.Blue,
                         Locked = false
                     },
@@ -116,12 +101,13 @@ namespace WvW_Status
                         LowVictoryPoints = CalculateVP(matches.Victory_Points.Red,(matches.Skirmishes.Count)).Item1,
                         HighVictoryPoints = CalculateVP(matches.Victory_Points.Red,(matches.Skirmishes.Count)).Item2,
                         VictoryPointsToolTip = CalculateVP(matches.Victory_Points.Red,(matches.Skirmishes.Count)).Item3,
+                        LongVP = Double.Parse($"{matches.Victory_Points.Red}.{matches.Skirmishes[(matches.Skirmishes.Count - 1)].Scores.Red}"),
                         Score = matches.Skirmishes[(matches.Skirmishes.Count - 1)].Scores.Red,
                         Locked = false
                     }
                 };
 
-                matchInfo = matchInfo.OrderByDescending(t => t.VictoryPoints).ToList();
+                matchInfo = matchInfo.OrderByDescending(m => m.LongVP).ToList();
                 currentMatch.Add(matchInfo);
             }
 
@@ -155,7 +141,6 @@ namespace WvW_Status
                 }
                 nextMatch.Add(preList);
             }
-
             for (int tier = 0; tier <= 2; tier++)
             {
                 if (currentMatch[tier][1].VictoryPoints != currentMatch[tier][2].VictoryPoints && currentMatch[(tier + 1)][0].VictoryPoints != currentMatch[(tier + 1)][1].VictoryPoints)
@@ -175,24 +160,25 @@ namespace WvW_Status
                 }
             }
         }
-
-        public void Render()
+        public void DisplayInformation()
         {
+            // ----------------------------------------------------------  Display the Information  -----------------------------------------------------------
+
             var formSize = new Size();
             var startCount = 0;
             var finishCount = 0;
             var formText = "";
 
-            if (regionEU == true)
+            if (regionEU)
             {
-                formSize = new Size(653, 828);
+                formSize = new Size(653, 823);
                 startCount = 4;
                 finishCount = 8;
                 formText = "Guild Wars 2 - WvW Status (EU)";
             }
             else
             {
-                formSize = new Size(653, 682);
+                formSize = new Size(653, 683);
                 startCount = 0;
                 finishCount = 3;
                 formText = "Guild Wars 2 - WvW Status (NA)";
@@ -327,7 +313,7 @@ namespace WvW_Status
                         Location = new Point(181, ry),
                         Size = new Size(24, 23),
                         BorderStyle = BorderStyle.FixedSingle,
-                        BackgroundImageLayout = ImageLayout.Center,
+                        BackgroundImageLayout = ImageLayout.Stretch,
                         BackgroundImage = currentMatch[tier][row].Locked == true ? Resources.Lock : null
                     };
 
@@ -389,14 +375,12 @@ namespace WvW_Status
                         Location = new Point(180, ry),
                         Size = new Size(24, 23),
                         BorderStyle = BorderStyle.FixedSingle,
-                        BackgroundImageLayout = ImageLayout.Center,
+                        BackgroundImageLayout = ImageLayout.Stretch,
                         BackgroundImage = nextMatch[tier][row].Item3 == true ? Resources.Lock : null
                     };
 
                     nextPanel.Controls.Add(nextLock);
-
                     ry += 26;
-
                 }
 
                 y += 140;
@@ -410,7 +394,7 @@ namespace WvW_Status
 
             var statusPanel = new Panel()
             {
-                Location = new Point(12, this.Height - 116),
+                Location = new Point(12, this.Height - 111),
                 Size = new Size(613, 28),
                 ForeColor = Color.Beige,
                 BackColor = Color.FromArgb(255, 52, 52, 52),
@@ -420,80 +404,73 @@ namespace WvW_Status
                 {
                     new Label()
                     {
-                        Location = new Point(8, 5),
+                        Location = new Point(27, 5),
                         AutoSize = true,
-                        Text = "Current Skirmish:"
+                        Text = regionEU ?
+                        $"Current Skirmish:  {skirmishEU}/84":
+                        $"Current Skirmish:  {skirmishNA}/84"
                     },
                     new Label()
                     {
-                        Location = new Point(132, 5),
+                        Location = new Point(219, 5),
                         AutoSize = true,
-                        Text = regionEU == false ?
-                        $"{skirmishNA}/84":
-                        $"{skirmishEU}/84"
+                        Text = regionEU ?
+                        $"Skirmishes Remaining:  {(84 - skirmishEU)}":
+                        $"Skirmishes Remaining:  {(84 - skirmishNA)}"
                     },
                     new Label()
                     {
-                        Location = new Point(208, 5),
+                        Location = new Point(414, 5),
                         AutoSize = true,
-                        Text = "Skirmishes Remaining:"
+                        Text = regionEU ?
+                        $"End of Match:  {EndOfMatchEU}":
+                        $"End of Match:  {EndOfMatchNA}"
                     },
-                    new Label()
-                    {
-                        Location = new Point(363, 5),
-                        AutoSize = true,
-                        Text = regionEU == false ?
-                        (84 - skirmishNA).ToString():
-                        (84 - skirmishEU).ToString()
-                    },
-                    new Label()
-                    {
-                        Location = new Point(409, 5),
-                        AutoSize = true,
-                        Text = "End of Match:"
-                    },
-                    new Label()
-                    {
-                        Location = new Point(510, 5),
-                        AutoSize = true,
-                        Text = regionEU == false ?
-                        EndOfMatchNA :
-                        EndOfMatchEU
-                    }
                 }
             };
 
             var regionButton = new Button()
-            {
-                Location = new Point(11, this.Height - 77),
-                UseVisualStyleBackColor = true,
+            {            
+                Location = new Point(12, this.Height - 77),                
+                FlatStyle = FlatStyle.Flat,                
                 ForeColor = Color.Black,
-                Size = new Size(615, 28),
-                TextAlign = ContentAlignment.MiddleCenter,
-                Text = regionEU == true ?
+                BackColor = Color.FromArgb(255, 125,125,125),
+                Size = new Size(613, 28),
+                Text = regionEU ?
                 "Click here to see NA Status" :
                 "Click here to see EU Status"
             };
 
-            regionButton.Click += new EventHandler(this.RegionButton_Click);
+            regionButton.FlatAppearance.BorderColor = Color.FromArgb(255, 52, 52, 52);
+            regionButton.Click += new EventHandler(this.RegionButton_Click);       
 
             this.Controls.Add(statusPanel);
             this.Controls.Add(regionButton);
-
-        }
+      
+        }        
         private void RegionButton_Click(object sender, EventArgs e)
         {
             regionEU = !regionEU;
             this.Controls.Clear();
-            Render();
-
+            DisplayInformation();
         }
-
+        public string CalculateEndOfMatch(string EndOfMatch)
+        {            
+            DateTime eom = new DateTime();
+            eom = DateTime.ParseExact(EndOfMatch, "yyyy-MM-ddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
+            TimeSpan diff = eom - DateTime.Now;
+            string result = diff.Days > 0
+                    ? $"{diff.Days}d {diff.Hours}h {diff.Minutes}m"
+                    : diff.Hours > 0
+                        ? $"{diff.Hours}h {diff.Minutes}m"
+                        : $"{diff.Minutes}m";
+            return result;            
+        }
         public (int, int, string) CalculateVP(int vp, int skirmish)
         {
             int lvp = vp + ((85 - skirmish) * 3);
             int hvp = vp + ((85 - skirmish) * 5);
-            string tip = "Lowest\t" + lvp.ToString() + "\r\n" + "Highest\t" + hvp.ToString();
+            string tip = $"Lowest\t {lvp} \r\nHighest\t {hvp}";
             return (lvp, hvp, tip);
         }
     }
