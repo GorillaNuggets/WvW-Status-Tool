@@ -16,12 +16,11 @@ namespace WvW_Status
     {
         static List<List<MatchInfo>> currentMatch = new List<List<MatchInfo>>();
         static List<List<(string, string, bool)>> nextMatch = new List<List<(string, string, bool)>>();
-        static bool regionEU = false;
+        static bool region = Settings.Default.defaultRegion; // true = NA : false = EU
         static int skirmishNA;
         static int skirmishEU;
         static string EndOfMatchNA;
         static string EndOfMatchEU;
-
         public MainForm()
         {
             InitializeComponent();
@@ -36,7 +35,7 @@ namespace WvW_Status
             var worldsData = client.DownloadString("https://api.guildwars2.com/v2/worlds?ids=all");
             var worldResult = JsonConvert.DeserializeObject<List<WorldsList>>(worldsData);
 
-            var matchesData = client.DownloadString("https://api.guildwars2.com/v2/wvw/matches?ids=all");            
+            var matchesData = client.DownloadString("https://api.guildwars2.com/v2/wvw/matches?ids=all");
             var matchesResult = JsonConvert.DeserializeObject<List<MatchesList>>(matchesData);
             client.Dispose();
 
@@ -169,7 +168,7 @@ namespace WvW_Status
             var finishCount = 0;
             var formText = "";
 
-            if (regionEU)
+            if (region)
             {
                 formSize = new Size(653, 830);
                 startCount = 4;
@@ -186,50 +185,49 @@ namespace WvW_Status
 
             this.Size = formSize;
             this.Text = formText;
-            this.CenterToScreen();
             this.Icon = Resources.Commander_tag;
 
             var buttonNA = new RadioButton()
             {
                 Location = new Point(32, 14),
                 Text = "NA Servers",
-                Checked = !regionEU
+                Checked = !region,                
             };
             var buttonEU = new RadioButton()
             {
                 Location = new Point(136, 14),
                 Text = "EU Servers",
-                Checked = regionEU
+                Checked = region
             };
             void RegionChanged(object sender, EventArgs e)
             {
-                regionEU = buttonEU.Checked;
+                region = !region;
                 this.Controls.Clear();
                 DisplayInformation();
             }
 
-            buttonNA.Click += RegionChanged;
-            buttonEU.Click += RegionChanged;
+            buttonEU.CheckedChanged += new EventHandler(RegionChanged);
 
             this.Controls.Add(buttonNA);
             this.Controls.Add(buttonEU);
 
-            int y = 52, count = 1;  
+            int y = 52, count = 1;
+            var fontColor = Color.FromArgb(255, 170, 170, 170);
 
             for (int tier = startCount; tier <= finishCount; tier++)
             {
                 var matchLabelPanel = new Panel()
                 {
                     Location = new Point(12, y),
-                    Size = new Size(390, 20),                    
+                    Size = new Size(390, 20),
                     Controls =
                     {
                         new Label()
-                        {                            
+                        {
                             Location = new Point(16, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Gray,
+                            ForeColor = fontColor,
                             Text = $"Current Tier {count} Matchup"
                         },
                         new Label()
@@ -237,7 +235,7 @@ namespace WvW_Status
                             Location = new Point(214, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Gray,
+                            ForeColor = fontColor,
                             Text = "Rank"
                         },
                         new Label()
@@ -245,7 +243,7 @@ namespace WvW_Status
                             Location = new Point(274, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Gray,
+                            ForeColor = fontColor,
                             Text = "VP"
                         },
                         new Label()
@@ -253,7 +251,7 @@ namespace WvW_Status
                             Location = new Point(310, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Gray,
+                            ForeColor = fontColor,
                             Text = "War Score"
                         }
                     }
@@ -269,7 +267,7 @@ namespace WvW_Status
                             Location = new Point(28, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Gray,                             
+                            ForeColor = fontColor,
                             Text = $"Next Tier {count} Matchup"
                         }
                     }
@@ -279,7 +277,7 @@ namespace WvW_Status
                     Location = new Point(12, y + 20),
                     Size = new Size(390, 100),
                     ForeColor = Color.Gainsboro,
-                    BackColor = Color.FromArgb(255, 32, 32, 32),                    
+                    BackColor = Color.FromArgb(255, 32, 32, 32),
                     Font = new Font("Cambria", 11, FontStyle.Regular),
 
                 };
@@ -327,17 +325,19 @@ namespace WvW_Status
                     teamToolTip.SetToolTip(teamName, currentMatch[tier][row].LinksToolTip);
                     matchPanel.Controls.Add(teamName);
 
-                    var teamLock = new PictureBox()
+                    if (currentMatch[tier][row].Locked)
                     {
-                        Location = new Point(181, ry),
-                        Size = new Size(24, 23),                                              
-                        BackgroundImageLayout = ImageLayout.Stretch,
-                        BackgroundImage = currentMatch[tier][row].Locked == true ? Resources.Lock : null
-                    };
-
-                    var teamLockToolTip = new ToolTip();
-                    teamLockToolTip.SetToolTip(teamLock, currentMatch[tier][row].Locked ? "Position Secured" : null);
-                    matchPanel.Controls.Add(teamLock);
+                        var teamLock = new PictureBox()
+                        {
+                            Location = new Point(181, ry),
+                            Size = new Size(24, 23),
+                            BackgroundImageLayout = ImageLayout.Stretch,
+                            BackgroundImage = Resources.Lock
+                        };
+                        var teamLockToolTip = new ToolTip();
+                        teamLockToolTip.SetToolTip(teamLock, "Position permanent until reset");
+                        matchPanel.Controls.Add(teamLock);
+                    }
 
                     var teamRank = new Label()
                     {
@@ -377,7 +377,7 @@ namespace WvW_Status
 
                     var nextName = new Label()
                     {
-                        Location = new Point(13, ry),
+                        Location = new Point(14, ry),
                         AutoSize = false,
                         Size = new Size(163, 23),
                         ForeColor = Color.Linen,
@@ -390,17 +390,20 @@ namespace WvW_Status
                     nextNameToolTip.SetToolTip(nextName, nextMatch[tier][row].Item2);
                     nextPanel.Controls.Add(nextName);
 
-                    var nextLock = new PictureBox()
+                    if (nextMatch[tier][row].Item3)
                     {
-                        Location = new Point(183, ry),
-                        Size = new Size(24, 23),                                             
-                        BackgroundImageLayout = ImageLayout.Stretch,
-                        BackgroundImage = nextMatch[tier][row].Item3 ? Resources.Lock : null
-                    };
+                        var nextLock = new PictureBox()
+                        {
+                            Location = new Point(183, ry),
+                            Size = new Size(24, 23),
+                            BackgroundImageLayout = ImageLayout.Stretch,
+                            BackgroundImage = Resources.Lock
+                        };
 
-                    var nextLockToolTip = new ToolTip();
-                    nextLockToolTip.SetToolTip(nextLock, nextMatch[tier][row].Item3 ? "Position Secured" : null);
-                    nextPanel.Controls.Add(nextLock);
+                        var nextLockToolTip = new ToolTip();
+                        nextLockToolTip.SetToolTip(nextLock, "Position secured");
+                        nextPanel.Controls.Add(nextLock);
+                    }
                     ry += 26;
                 }
 
@@ -414,9 +417,9 @@ namespace WvW_Status
             }
 
             var statusPanel = new Panel()
-            {                
-                Location = new Point(12, y-5),
-                Size = new Size(613, 28),                
+            {
+                Location = new Point(12, y - 5),
+                Size = new Size(613, 28),
                 ForeColor = Color.Gainsboro,
                 Font = new Font("Cambria", 11, FontStyle.Regular),
                 Controls =
@@ -425,7 +428,7 @@ namespace WvW_Status
                     {
                         Location = new Point(27, 5),
                         AutoSize = true,
-                        Text = regionEU ?
+                        Text = region ?
                         $"Current Skirmish:  {skirmishEU}/84":
                         $"Current Skirmish:  {skirmishNA}/84"
                     },
@@ -433,7 +436,7 @@ namespace WvW_Status
                     {
                         Location = new Point(219, 5),
                         AutoSize = true,
-                        Text = regionEU ?
+                        Text = region ?
                         $"Skirmishes Remaining:  {(84 - skirmishEU)}":
                         $"Skirmishes Remaining:  {(84 - skirmishNA)}"
                     },
@@ -441,7 +444,7 @@ namespace WvW_Status
                     {
                         Location = new Point(414, 5),
                         AutoSize = true,
-                        Text = regionEU ?
+                        Text = region ?
                         $"End of Match:  {EndOfMatchEU}":
                         $"End of Match:  {EndOfMatchNA}"
                     },
@@ -451,7 +454,7 @@ namespace WvW_Status
             this.Controls.Add(statusPanel);
         }
         public string CalculateEndOfMatch(string EndOfMatch)
-        {            
+        {
             DateTime eom = new DateTime();
             eom = DateTime.ParseExact(EndOfMatch, "yyyy-MM-ddTHH:mm:ssZ", System.Globalization.CultureInfo.InvariantCulture);
             TimeSpan diff = eom - DateTime.Now;
@@ -460,7 +463,7 @@ namespace WvW_Status
                     : diff.Hours > 0
                         ? $"{diff.Hours}h {diff.Minutes}m"
                         : $"{diff.Minutes}m";
-            return result;            
+            return result;
         }
         public (int, int, string) CalculateVP(int vp, int skirmish)
         {
@@ -468,6 +471,12 @@ namespace WvW_Status
             int hvp = vp + ((85 - skirmish) * 5);
             string tip = $"Lowest\t {lvp} \r\nHighest\t {hvp}";
             return (lvp, hvp, tip);
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Settings.Default.defaultRegion = region;
+            Settings.Default.Save();
         }
     }
 }
