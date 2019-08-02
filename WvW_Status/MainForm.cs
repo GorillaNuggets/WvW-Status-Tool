@@ -189,7 +189,32 @@ namespace WvW_Status
             this.CenterToScreen();
             this.Icon = Resources.Commander_tag;
 
-            int y = 52, count = 1;            
+            var buttonNA = new RadioButton()
+            {
+                Location = new Point(32, 14),
+                Text = "NA Servers",
+                Checked = !regionEU
+            };
+            var buttonEU = new RadioButton()
+            {
+                Location = new Point(136, 14),
+                Text = "EU Servers",
+                Checked = regionEU
+            };
+            void RegionChanged(object sender, EventArgs e)
+            {
+                regionEU = buttonEU.Checked;
+                this.Controls.Clear();
+                DisplayInformation();
+            }
+
+            buttonNA.Click += RegionChanged;
+            buttonEU.Click += RegionChanged;
+
+            this.Controls.Add(buttonNA);
+            this.Controls.Add(buttonEU);
+
+            int y = 52, count = 1;  
 
             for (int tier = startCount; tier <= finishCount; tier++)
             {
@@ -241,7 +266,7 @@ namespace WvW_Status
                     {
                         new Label()
                         {
-                            Location = new Point(26, 0),
+                            Location = new Point(28, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
                             ForeColor = Color.Gray,                             
@@ -310,6 +335,8 @@ namespace WvW_Status
                         BackgroundImage = currentMatch[tier][row].Locked == true ? Resources.Lock : null
                     };
 
+                    var teamLockToolTip = new ToolTip();
+                    teamLockToolTip.SetToolTip(teamLock, currentMatch[tier][row].Locked ? "Position Secured" : null);
                     matchPanel.Controls.Add(teamLock);
 
                     var teamRank = new Label()
@@ -350,7 +377,7 @@ namespace WvW_Status
 
                     var nextName = new Label()
                     {
-                        Location = new Point(11, ry),
+                        Location = new Point(13, ry),
                         AutoSize = false,
                         Size = new Size(163, 23),
                         ForeColor = Color.Linen,
@@ -365,12 +392,14 @@ namespace WvW_Status
 
                     var nextLock = new PictureBox()
                     {
-                        Location = new Point(180, ry),
+                        Location = new Point(183, ry),
                         Size = new Size(24, 23),                                             
                         BackgroundImageLayout = ImageLayout.Stretch,
-                        BackgroundImage = nextMatch[tier][row].Item3 == true ? Resources.Lock : null
+                        BackgroundImage = nextMatch[tier][row].Item3 ? Resources.Lock : null
                     };
 
+                    var nextLockToolTip = new ToolTip();
+                    nextLockToolTip.SetToolTip(nextLock, nextMatch[tier][row].Item3 ? "Position Secured" : null);
                     nextPanel.Controls.Add(nextLock);
                     ry += 26;
                 }
@@ -419,42 +448,7 @@ namespace WvW_Status
                 }
             };
 
-            var buttonPanel = new Panel()
-            {
-                Location = new Point(12,12),
-                Size = new Size(613, 28),                 
-                ForeColor = Color.Gainsboro,                
-            };
-
-            var buttonNA = new RadioButton()
-            {
-                Location = new Point(20, 2),                
-                Text = "NA Servers",
-                Checked = !regionEU                
-            };
-
-            var buttonEU = new RadioButton()
-            {
-                Location = new Point(124, 2),
-                Text = "EU Servers",
-                Checked = regionEU
-            };
-
-            void RegionChanged(object sender, EventArgs e)
-            {
-                regionEU = buttonEU.Checked;                
-                this.Controls.Clear();
-                DisplayInformation();
-            }
-
-            buttonNA.Click += RegionChanged;
-            buttonEU.Click += RegionChanged;            
-
-            buttonPanel.Controls.Add(buttonNA);
-            buttonPanel.Controls.Add(buttonEU);
-            
             this.Controls.Add(statusPanel);
-            this.Controls.Add(buttonPanel);
         }
         public string CalculateEndOfMatch(string EndOfMatch)
         {            
