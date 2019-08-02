@@ -171,14 +171,14 @@ namespace WvW_Status
 
             if (regionEU)
             {
-                formSize = new Size(653, 823);
+                formSize = new Size(653, 830);
                 startCount = 4;
                 finishCount = 8;
                 formText = "Guild Wars 2 - WvW Status (EU)";
             }
             else
             {
-                formSize = new Size(653, 683);
+                formSize = new Size(653, 690);
                 startCount = 0;
                 finishCount = 3;
                 formText = "Guild Wars 2 - WvW Status (NA)";
@@ -189,48 +189,46 @@ namespace WvW_Status
             this.CenterToScreen();
             this.Icon = Resources.Commander_tag;
 
-            int y = 12, count = 1;
+            int y = 52, count = 1;            
 
             for (int tier = startCount; tier <= finishCount; tier++)
             {
                 var matchLabelPanel = new Panel()
                 {
                     Location = new Point(12, y),
-                    Size = new Size(390, 28),
-                    BackColor = Color.FromArgb(255, 52, 52, 52),
-                    BorderStyle = BorderStyle.FixedSingle,
+                    Size = new Size(390, 20),                    
                     Controls =
                     {
                         new Label()
-                        {
-                            Location = new Point(16, 5),
+                        {                            
+                            Location = new Point(16, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Beige,
+                            ForeColor = Color.Gray,
                             Text = $"Current Tier {count} Matchup"
                         },
                         new Label()
                         {
-                            Location = new Point(214, 5),
+                            Location = new Point(214, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Beige,
+                            ForeColor = Color.Gray,
                             Text = "Rank"
                         },
                         new Label()
                         {
-                            Location = new Point(274, 5),
+                            Location = new Point(274, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Beige,
+                            ForeColor = Color.Gray,
                             Text = "VP"
                         },
                         new Label()
                         {
-                            Location = new Point(310, 5),
+                            Location = new Point(310, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Beige,
+                            ForeColor = Color.Gray,
                             Text = "War Score"
                         }
                     }
@@ -238,37 +236,33 @@ namespace WvW_Status
                 var nextLabelPanel = new Panel()
                 {
                     Location = new Point(408, y),
-                    Size = new Size(217, 28),
-                    BackColor = Color.FromArgb(255, 52, 52, 52),
-                    BorderStyle = BorderStyle.FixedSingle,
+                    Size = new Size(217, 20),
                     Controls =
                     {
                         new Label()
                         {
-                            Location = new Point(40, 5),
+                            Location = new Point(26, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
-                            ForeColor = Color.Beige,
+                            ForeColor = Color.Gray,                             
                             Text = $"Next Tier {count} Matchup"
                         }
                     }
                 };
                 var matchPanel = new Panel()
                 {
-                    Location = new Point(12, y + 34),
+                    Location = new Point(12, y + 20),
                     Size = new Size(390, 100),
                     ForeColor = Color.Gainsboro,
-                    BackColor = Color.FromArgb(255, 24, 24, 24),
-                    BorderStyle = BorderStyle.FixedSingle,
+                    BackColor = Color.FromArgb(255, 32, 32, 32),                    
                     Font = new Font("Cambria", 11, FontStyle.Regular),
 
                 };
                 var nextPanel = new Panel()
                 {
-                    Location = new Point(408, y + 34),
+                    Location = new Point(408, y + 20),
                     Size = new Size(217, 100),
-                    BackColor = Color.FromArgb(255, 24, 24, 24),
-                    BorderStyle = BorderStyle.FixedSingle,
+                    BackColor = Color.FromArgb(255, 32, 32, 32),
                 };
 
                 int ry = 12;
@@ -311,8 +305,7 @@ namespace WvW_Status
                     var teamLock = new PictureBox()
                     {
                         Location = new Point(181, ry),
-                        Size = new Size(24, 23),
-                        BorderStyle = BorderStyle.FixedSingle,
+                        Size = new Size(24, 23),                                              
                         BackgroundImageLayout = ImageLayout.Stretch,
                         BackgroundImage = currentMatch[tier][row].Locked == true ? Resources.Lock : null
                     };
@@ -373,8 +366,7 @@ namespace WvW_Status
                     var nextLock = new PictureBox()
                     {
                         Location = new Point(180, ry),
-                        Size = new Size(24, 23),
-                        BorderStyle = BorderStyle.FixedSingle,
+                        Size = new Size(24, 23),                                             
                         BackgroundImageLayout = ImageLayout.Stretch,
                         BackgroundImage = nextMatch[tier][row].Item3 == true ? Resources.Lock : null
                     };
@@ -393,12 +385,10 @@ namespace WvW_Status
             }
 
             var statusPanel = new Panel()
-            {
-                Location = new Point(12, this.Height - 111),
-                Size = new Size(613, 28),
-                ForeColor = Color.Beige,
-                BackColor = Color.FromArgb(255, 52, 52, 52),
-                BorderStyle = BorderStyle.FixedSingle,
+            {                
+                Location = new Point(12, y-5),
+                Size = new Size(613, 28),                
+                ForeColor = Color.Gainsboro,
                 Font = new Font("Cambria", 11, FontStyle.Regular),
                 Controls =
                 {
@@ -429,30 +419,42 @@ namespace WvW_Status
                 }
             };
 
-            var regionButton = new Button()
-            {            
-                Location = new Point(12, this.Height - 77),                
-                FlatStyle = FlatStyle.Flat,                
-                ForeColor = Color.Black,
-                BackColor = Color.FromArgb(255, 125,125,125),
-                Size = new Size(613, 28),
-                Text = regionEU ?
-                "Click here to see NA Status" :
-                "Click here to see EU Status"
+            var buttonPanel = new Panel()
+            {
+                Location = new Point(12,12),
+                Size = new Size(613, 28),                 
+                ForeColor = Color.Gainsboro,                
             };
 
-            regionButton.FlatAppearance.BorderColor = Color.FromArgb(255, 52, 52, 52);
-            regionButton.Click += new EventHandler(this.RegionButton_Click);       
+            var buttonNA = new RadioButton()
+            {
+                Location = new Point(20, 2),                
+                Text = "NA Servers",
+                Checked = !regionEU                
+            };
 
+            var buttonEU = new RadioButton()
+            {
+                Location = new Point(124, 2),
+                Text = "EU Servers",
+                Checked = regionEU
+            };
+
+            void RegionChanged(object sender, EventArgs e)
+            {
+                regionEU = buttonEU.Checked;                
+                this.Controls.Clear();
+                DisplayInformation();
+            }
+
+            buttonNA.Click += RegionChanged;
+            buttonEU.Click += RegionChanged;            
+
+            buttonPanel.Controls.Add(buttonNA);
+            buttonPanel.Controls.Add(buttonEU);
+            
             this.Controls.Add(statusPanel);
-            this.Controls.Add(regionButton);
-      
-        }        
-        private void RegionButton_Click(object sender, EventArgs e)
-        {
-            regionEU = !regionEU;
-            this.Controls.Clear();
-            DisplayInformation();
+            this.Controls.Add(buttonPanel);
         }
         public string CalculateEndOfMatch(string EndOfMatch)
         {            
