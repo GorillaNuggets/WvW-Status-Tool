@@ -34,5 +34,17 @@ namespace WvW_Status.Properties {
                 this["defaultRegion"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point defaultLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["defaultLocation"]));
+            }
+            set {
+                this["defaultLocation"] = value;
+            }
+        }
     }
 }
