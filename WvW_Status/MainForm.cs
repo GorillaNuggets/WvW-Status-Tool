@@ -158,7 +158,7 @@ namespace WvW_Status
                     nextMatch[tier][2] = (nextMatch[tier + 1][0]);
                     nextMatch[tier + 1][0] = (temp);
                 }
-            }
+            }        
         }
         public void DisplayInformation()
         {
@@ -183,7 +183,7 @@ namespace WvW_Status
                 finishCount = 3;
                 formText = "Guild Wars 2 - WvW Status (NA)";
             }
-
+            
             this.Size = formSize;
             this.Text = formText;
             this.Icon = Resources.Commander_tag;
@@ -473,11 +473,15 @@ namespace WvW_Status
             string tip = $"Lowest\t {lvp} \r\nHighest\t {hvp}";
             return (lvp, hvp, tip);
         }
-
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            this.Location = Settings.Default.defaultLocation;
+        }
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             Settings.Default.defaultRegion = region;
+            Settings.Default.defaultLocation = this.Location;
             Settings.Default.Save();
-        }
+        }        
     }
 }
