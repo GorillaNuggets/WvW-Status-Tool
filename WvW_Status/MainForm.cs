@@ -35,7 +35,8 @@ namespace WvW_Status
             var worldsData = client.DownloadString("https://api.guildwars2.com/v2/worlds?ids=all");
             var worldResult = JsonConvert.DeserializeObject<List<WorldsList>>(worldsData);
 
-            var matchesData = client.DownloadString("https://api.guildwars2.com/v2/wvw/matches?ids=all");
+            var matchString = "1-1, 1-2, 1-3, 1-4, 2-1, 2-2, 2-3, 2-4, 2-5";
+            var matchesData = client.DownloadString($"https://api.guildwars2.com/v2/wvw/matches?ids={matchString}");
             var matchesResult = JsonConvert.DeserializeObject<List<MatchesList>>(matchesData);
             client.Dispose();
 
