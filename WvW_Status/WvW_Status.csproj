@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Commander_tag.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -55,18 +58,25 @@
     <Compile Include="ErrorForm.designer.cs">
       <DependentUpon>ErrorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Factory\NextMatchFactory.cs" />
+    <Compile Include="Factory\WorldInfoFactory.cs" />
+    <Compile Include="Factory\CurrentMatchFactory.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MatchesList.cs" />
-    <Compile Include="MatchInfo.cs" />
+    <Compile Include="Model\MatchesList.cs" />
+    <Compile Include="Model\MatchInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WorldInfo.cs" />
-    <Compile Include="WorldsList.cs" />
+    <Compile Include="Model\WorldInfo.cs" />
+    <Compile Include="Model\WorldsList.cs" />
+    <Compile Include="Tool\TimeAgo.cs" />
+    <Compile Include="Tool\EndOfMatch.cs" />
+    <Compile Include="Tool\EndOfSkirmish.cs" />
+    <Compile Include="Tool\VictoryPointStats.cs" />
     <EmbeddedResource Include="ErrorForm.resx">
       <DependentUpon>ErrorForm.cs</DependentUpon>
     </EmbeddedResource>
