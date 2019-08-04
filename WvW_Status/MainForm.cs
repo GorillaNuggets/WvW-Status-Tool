@@ -128,9 +128,17 @@ namespace WvW_Status
 
             var buttonRefresh = new Button
             {
-                Location = new Point(540, 14),
+                Location = new Point(552, 12),//540
+                AutoSize = true,
+                UseVisualStyleBackColor = true,
+                ForeColor = Color.Gainsboro,
+                BackColor = Color.FromArgb(255, 52, 52, 52),
+                FlatStyle = FlatStyle.Flat,
                 Text = "Refresh"
             };
+
+            buttonRefresh.FlatAppearance.BorderColor = Color.FromArgb(255, 125, 125, 125);
+            
 
             buttonRefresh.Click += (sender, e) =>
             {
@@ -441,7 +449,7 @@ namespace WvW_Status
                     },
                     new Label
                     {
-                        Location = new Point(414, 5), //414
+                        Location = new Point(414, 5),
                         AutoSize = true,
                         Text = _currentRegionIsEU ? $"End of Match: {_endOfMatchEU}" : $"End of Match: {_endOfMatchNA}"
                     }
