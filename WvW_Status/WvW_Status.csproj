@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\Commander_tag.ico</ApplicationIcon>
+    <ApplicationIcon>WvW_Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -111,10 +111,11 @@
     <None Include="Resources\Lock.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Commander_tag.ico" />
+    <None Include="Resources\Caution.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Caution.png" />
+    <None Include="Resources\WvW_Icon.ico" />
+    <Content Include="WvW_Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
