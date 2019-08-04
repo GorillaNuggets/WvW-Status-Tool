@@ -128,7 +128,7 @@ namespace WvW_Status
 
             var buttonRefresh = new Button
             {
-                Location = new Point(552, 12),//540
+                Location = new Point(606, 12),
                 AutoSize = true,
                 UseVisualStyleBackColor = true,
                 ForeColor = Color.Gainsboro,
@@ -143,12 +143,13 @@ namespace WvW_Status
             buttonRefresh.Click += (sender, e) =>
             {
                 FetchData();
+                DataPanel.Controls.Clear();
                 DisplayInformation();
             };
 
             _lastRefreshLabel = new Label
             {
-                Location = new Point(340, 14),
+                Location = new Point(394, 14),
                 TextAlign = ContentAlignment.MiddleRight,
                 Text = "Loading...",
                 Font = new Font(Font.FontFamily.Name, 8),
@@ -191,14 +192,14 @@ namespace WvW_Status
 
             if (_currentRegionIsEU)
             {
-                formSize = new Size(653, 830);
+                formSize = new Size(709, 830);
                 startCount = 4;
                 finishCount = 8;
                 formText = "Guild Wars 2 - WvW Status (EU)";
             }
             else
             {
-                formSize = new Size(653, 690);
+                formSize = new Size(709, 690);
                 startCount = 0;
                 finishCount = 3;
                 formText = "Guild Wars 2 - WvW Status (NA)";
@@ -217,7 +218,7 @@ namespace WvW_Status
                 var matchLabelPanel = new Panel
                 {
                     Location = new Point(12, y),
-                    Size = new Size(390, 20),
+                    Size = new Size(446, 20),
                     Controls =
                     {
                         new Label
@@ -238,7 +239,7 @@ namespace WvW_Status
                         },
                         new Label
                         {
-                            Location = new Point(274, 0),
+                            Location = new Point(278, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
                             ForeColor = fontColor,
@@ -246,17 +247,25 @@ namespace WvW_Status
                         },
                         new Label
                         {
-                            Location = new Point(310, 0),
+                            Location = new Point(328, 0),
                             Font = new Font("Cambria", 11, FontStyle.Regular),
                             AutoSize = true,
                             ForeColor = fontColor,
-                            Text = "War Score"
+                            Text = "PPT"
+                        },
+                        new Label
+                        {
+                            Location = new Point(387, 0),
+                            Font = new Font("Cambria", 11, FontStyle.Regular),
+                            AutoSize = true,
+                            ForeColor = fontColor,
+                            Text = "Score"
                         }
                     }
                 };
                 var nextLabelPanel = new Panel
                 {
-                    Location = new Point(408, y),
+                    Location = new Point(464, y),
                     Size = new Size(217, 20),
                     Controls =
                     {
@@ -273,14 +282,14 @@ namespace WvW_Status
                 var matchPanel = new Panel
                 {
                     Location = new Point(12, y + 20),
-                    Size = new Size(390, 100),
+                    Size = new Size(446, 100),
                     ForeColor = Color.Gainsboro,
                     BackColor = Color.FromArgb(255, 32, 32, 32),
                     Font = new Font("Cambria", 11, FontStyle.Regular)
                 };
                 var nextPanel = new Panel
                 {
-                    Location = new Point(408, y + 20),
+                    Location = new Point(464, y + 20),
                     Size = new Size(217, 100),
                     BackColor = Color.FromArgb(255, 32, 32, 32)
                 };
@@ -361,7 +370,7 @@ namespace WvW_Status
 
                     var teamVictoryPoints = new Label
                     {
-                        Location = new Point(272, ry),
+                        Location = new Point(275, ry),
                         AutoSize = false,
                         Size = new Size(32, 23),
                         TextAlign = ContentAlignment.MiddleCenter,
@@ -372,9 +381,20 @@ namespace WvW_Status
                     tooltip.SetToolTip(teamVictoryPoints, _currentMatch[tier][row].VictoryPointsToolTip);
                     matchPanel.Controls.Add(teamVictoryPoints);
 
+                    var teamPPT = new Label
+                    {
+                        Location = new Point(323, ry),
+                        AutoSize = false,
+                        Size = new Size(40, 23),
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        Text = $"+{_currentMatch[tier][row].PPT}"
+                    };
+
+                    matchPanel.Controls.Add(teamPPT);
+
                     var teamScore = new Label
                     {
-                        Location = new Point(326, ry),
+                        Location = new Point(388, ry),
                         AutoSize = false,
                         Size = new Size(40, 23),
                         TextAlign = ContentAlignment.MiddleCenter,
@@ -385,7 +405,7 @@ namespace WvW_Status
 
                     var nextName = new Label
                     {
-                        Location = new Point(12, ry), //14
+                        Location = new Point(12, ry),
                         AutoSize = false,
                         Size = new Size(163, 23),
                         ForeColor = Color.Linen,
@@ -426,31 +446,31 @@ namespace WvW_Status
             var statusPanel = new Panel
             {
                 Location = new Point(12, y - 5),
-                Size = new Size(613, 28),
-                ForeColor = Color.Gainsboro,
+                Size = new Size(669, 28),
+                ForeColor = Color.Gainsboro,                
                 Font = new Font(@"Cambria", 11, FontStyle.Regular),
                 Controls =
                 {
                     new Label
                     {
-                        Location = new Point(27, 5),
-                        AutoSize = true,
+                        Location = new Point(16, 5),
+                        AutoSize = true,                                                
                         Text = _currentRegionIsEU
                             ? $"Current Skirmish: {_skirmishEU}/84"
-                            : $"Current Skirmish: {_skirmishNA}/84"
+                            : $"Current Skirmish: {_skirmishNA}/84"                            
                     },
                     new Label
                     {
-                        Location = new Point(220, 5),
-                        AutoSize = true,
+                        Location = new Point(249, 5),
+                        AutoSize = true,                        
                         Text = _currentRegionIsEU
                             ? $"End of Skirmish: {_endOfSkirmishEU}"
                             : $"End of Skirmish: {_endOfSkirmishNA}"
                     },
                     new Label
                     {
-                        Location = new Point(414, 5),
-                        AutoSize = true,
+                        Location = new Point(475, 5),
+                        AutoSize = true,                        
                         Text = _currentRegionIsEU ? $"End of Match: {_endOfMatchEU}" : $"End of Match: {_endOfMatchNA}"
                     }
                 }
