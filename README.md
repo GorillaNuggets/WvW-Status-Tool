@@ -1,6 +1,6 @@
 # WvW Status Tool
 
-![Screenshot of tool](https://raw.githubusercontent.com/MesmerMag/GW2---WvW-Status-Tool/MesmerMag-screenshot/screenshot.png)
+![Screenshot of tool](https://raw.githubusercontent.com/GorillaNuggets/GW2---WvW-Status-Tool/master/screenshot.png)
 
 ### Disclaimer
 
