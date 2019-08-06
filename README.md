@@ -7,7 +7,7 @@ https://github.com/GorillaNuggets/GW2---WvW-Status-Tool/releases/latest/download
 
 ## Screenshot of Tool
 
-![Screenshot of tool](https://raw.githubusercontent.com/GorillaNuggets/GW2---WvW-Status-Tool/master/screenshot.png)
+![Screenshot of tool](https://raw.githubusercontent.com/GorillaNuggets/WvW-Status-Tool/master/screenshot.png)
 
 ### Disclaimer
 
