@@ -11,7 +11,7 @@ https://github.com/GorillaNuggets/WvW-Status-Tool/releases/latest/download/WvW_S
 
 ## Screenshot of Lock
 
-A Lock beside a teams name indicates that it is unable to change positions (1st, 2nd or 3rd) for the remainder of the match.
+A lock beside a teams name indicates that it is unable to change positions (1st, 2nd or 3rd) for the remainder of the match.
 It also solidifies their spot in the next matchup (unless there is a tie).
 
 ![Screenshot of lock](https://raw.githubusercontent.com/GorillaNuggets/WvW-Status-Tool/master/screenshot_lock.png)
