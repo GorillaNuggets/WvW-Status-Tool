@@ -115,7 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\WvW_Icon.ico" />
-    <Content Include="WvW_Icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
